@@ -1,0 +1,43 @@
+/* ToggleButtonExample.css */
+
+
+.toggle-buttons {
+  display: inline-flex;
+  border: 2px solid #283240;
+  border-radius: 25px;
+  overflow: hidden;
+  margin-top:10px;
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #283240;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.toggle-button.selected {
+  background-color: #283240;
+  color: white;
+}
+
+.toggle-button .icon {
+  margin-right: 5px;
+}
+
+
+.css-1v5u2yv{
+  padding:0px !important
+}
+
+.css-j8x530{
+  padding:10px 20px !important;
+  margin:0px 0px !important;
+}
