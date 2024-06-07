@@ -100,6 +100,7 @@ export default function ResponsiveDrawer(props: Props) {
           alt="logo"
           style={{
             height: "57px",
+            paddingLeft: "6px",
           }}
         />
       </Link>
@@ -144,17 +145,19 @@ export default function ResponsiveDrawer(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="div" sx={{ color: "#6b7483", flexGrow: 1 }}>
+          <Typography
+            component="div"
+            sx={{ color: "#6b7483", flexGrow: 1, letterSpacing: "0em" }}
+          >
             <span
-              style={{ color: "#03adf5", fontSize: "20px", fontWeight: "900" }}
+              style={{ color: "#03A9F4", fontSize: "20px", fontWeight: "500" }}
             >
               Token Tool &nbsp;
             </span>
             by VirtualLaunch
           </Typography>
-          
-          <Button sx={{color:"#283240"}}>Pricing</Button>
-          <Button sx={{color:"#283240"}}>Contact</Button>
+          <Button sx={{ color: "#283240" }}>Pricing</Button>
+          <Button sx={{ color: "#283240" }}>Contact</Button>
           <w3m-button />
           <Box sx={{ flexGrow: 0, marginLeft: "10px" }}>
             <Tooltip title="Open settings">
@@ -239,8 +242,8 @@ export default function ResponsiveDrawer(props: Props) {
         }}
       >
         <Toolbar />
-        <Box sx={{ flexGrow: 1 ,margin : "10px"}}>
-        <Outlet />
+        <Box sx={{  margin: "10px" }}>
+          <Outlet />
         </Box>
       </Box>
     </Box>

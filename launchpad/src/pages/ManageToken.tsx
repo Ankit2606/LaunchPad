@@ -11,8 +11,16 @@ import {
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ManageToken = () => {
+  const navigate = useNavigate();
+
+  const handleManageClick = () => {
+    console.log("Manage Clicked");
+    navigate("/manageTokenTool")
+  }
+  
   return (
     <Box sx={{ mt: 4 }}>
       <Typography
@@ -58,7 +66,7 @@ const ManageToken = () => {
               />
             </Box>
             <Box sx={{ mt: 2 }}>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" onClick={handleManageClick}>
                 Continue
               </Button>
             </Box>

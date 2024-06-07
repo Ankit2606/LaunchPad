@@ -17,6 +17,7 @@ import ManageTokenSale from './pages/ManageTokenSale';
 import CreateNFT from './pages/CreateNFT';
 import ManageNFT from './pages/ManageNFT';
 import DistributeNFT from './pages/DistributeNFT';
+import ManageTokenTool from './components/ManageTokenTool';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="createNFT" element={<CreateNFT />} />
       <Route path="manageNFT" element={<ManageNFT />} />
       <Route path="distributeNFT" element={<DistributeNFT />} />
+      <Route path="manageTokenTool" element={<ManageTokenTool />} />
     </Route>
   )
 );
