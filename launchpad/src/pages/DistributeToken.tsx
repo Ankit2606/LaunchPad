@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,26 +8,41 @@ import {
   ListItem,
   ListItemText,
   Grid,
-  Paper,
   Autocomplete,
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { makeStyles } from "@mui/styles";
+import axios from "axios";
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
+import { styled } from "@mui/material/styles";
+import { useDropzone } from "react-dropzone";
 
-const useStyles = makeStyles((theme) => ({
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
+const useStyles = makeStyles(() => ({
   textField: {
     width: "80%",
     "& .MuiOutlinedInput-root": {
-      '&.Mui-focused fieldset': {
-        borderColor: '#28b5f6',
+      "&.Mui-focused fieldset": {
+        borderColor: "#28b5f6",
       },
-
     },
   },
   input: {
-    color: '#28b5f6', 
-    fontSize: '12px',
+    color: "#28b5f6",
+    fontSize: "12px",
   },
   dropdownItem: {
     color: "#28b5f6",
@@ -46,17 +61,90 @@ const useStyles = makeStyles((theme) => ({
 
 const DistributeToken = () => {
   const classes = useStyles();
-  const tokens = [
-    { label: "ANK", address: "0xfb2aff6bf2d339a5e73ed73f1ec554b6ee3de356" },
-    { label: "MTK", address: "0xfaeea9d72ccd59c3290a3faa1aec82ff9b85a6f1" },
-    { label: "NTK", address: "0xddb3c3627cfacc96332ff91af6653500021816" },
-    { label: "ANK", address: "0xfb2aff6bf2d339a5e73ed73f1ec554b6ee3de356" },
-    { label: "MTK", address: "0xfaeea9d72ccd59c3290a3faa1aec82ff9b85a6f1" },
-    { label: "NTK", address: "0xddb3c3627cfacc96332ff91af6653500021816" },
-    { label: "ANK", address: "0xfb2aff6bf2d339a5e73ed73f1ec554b6ee3de356" },
-    { label: "MTK", address: "0xfaeea9d72ccd59c3290a3faa1aec82ff9b85a6f1" },
-    { label: "NTK", address: "0xddb3c3627cfacc96332ff91af6653500021816" },
-  ];
+  const [tokensData, setTokensData] = React.useState<any>([]);
+  const [data, setData] = React.useState<any[]>([]);
+  const [uploadedFileName, setUploadedFileName] = React.useState<string>("");
+
+  const handleFileUpload = (file: File) => {
+    const fileType = file.type;
+    setUploadedFileName(file.name);
+
+    if (fileType.includes("csv")) {
+      Papa.parse(file, {
+        header: false,
+        complete: (results: any) => {
+          const parsedData = results.data.map((row: string[]) => {
+            const [address, value] = row[0].split(/\s+/);
+            return [address.trim(), parseInt(value.trim())];
+          });
+          setData(parsedData);
+        },
+        error: (error: any) => {
+          console.error("Error parsing CSV:", error);
+        },
+      });
+    } else if (
+      fileType.includes("spreadsheetml") ||
+      fileType.includes("excel")
+    ) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        const parsedData = jsonData.map((row: any) => {
+          const [address, value] = Object.values(row).join(" ").split(/\s+/);
+          return [address.trim(), parseInt(value.trim())];
+        });
+        setData(parsedData);
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (fileType.includes("plain") || fileType.includes("text")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const textData = (e.target?.result as string).trim();
+        const parsedData = textData
+          .split("\n")
+          .map((row) => row.split(/\s+/))
+          .map(([address, value]) => [address.trim(), parseInt(value.trim())]);
+        setData(parsedData);
+      };
+      reader.readAsText(file);
+    } else {
+      console.error("Unsupported file type:", fileType);
+    }
+  };
+
+  const readTokenData = async () => {
+    const data: any = await axios.get(
+      `http://localhost:5000/erc20/tokenAndBalance`
+    );
+    setTokensData(data.data.response);
+  };
+
+  const onDrop = (acceptedFiles: File[]) => {
+    acceptedFiles.forEach((file) => handleFileUpload(file));
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "text/csv": [".csv"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
+      "application/vnd.ms-excel": [".xls"],
+      "text/plain": [".txt"],
+    },
+  });
+
+  useEffect(() => {
+    readTokenData();
+  }, []);
+
   return (
     <Box sx={{ mt: 4 }}>
       <Typography
@@ -101,10 +189,14 @@ const DistributeToken = () => {
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                options={tokens}
-                getOptionLabel={(option) => `${option.address}`}
+                options={tokensData}
+                getOptionLabel={(option: any) => `${option.token_address}`}
                 renderInput={(params) => (
-                  <TextField {...params} sx={{ width: "80%" }} className={classes.textField} />
+                  <TextField
+                    {...params}
+                    sx={{ width: "80%" }}
+                    className={classes.textField}
+                  />
                 )}
                 renderOption={(props, option) => (
                   <Box
@@ -112,8 +204,13 @@ const DistributeToken = () => {
                     {...props}
                     className={classes.dropdownItem}
                   >
-                    <Typography variant="body2" sx={{ display:"flex"}}>
-                      <span style= {{fontWeight: "800",flexGrow: 1}}>{option.label}</span>  <span style={{ color: "black",}}>{option.address}</span>
+                    <Typography variant="body2" sx={{ display: "flex" }}>
+                      <span style={{ fontWeight: "800", flexGrow: 1 }}>
+                        {option.symbol}
+                      </span>{" "}
+                      <span style={{ color: "black" }}>
+                        {option.token_address}
+                      </span>
                     </Typography>
                   </Box>
                 )}
@@ -126,8 +223,8 @@ const DistributeToken = () => {
             >
               Addresses with amounts
             </Typography>
-            <Paper
-              variant="outlined"
+            <Box
+              {...getRootProps()}
               sx={{
                 p: 3,
                 mb: 3,
@@ -135,24 +232,49 @@ const DistributeToken = () => {
                 backgroundColor: "#f9f9f9",
                 border: "2px dashed #07aaf4",
                 width: "80%",
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
               }}
             >
-              <CloudUploadIcon
-                color="action"
-                sx={{ fontSize: 40, color: "#07aaf4" }}
-              />
-              <Typography
-                variant="body1"
-                gutterBottom
-                sx={{ color: "#07aaf4" }}
-              >
-                Drag and drop your file here or click to upload
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                CSV / Excel / Txt
-              </Typography>
-            </Paper>
-
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Drop the files here ...</p>
+              ) : (
+                <>
+                  <CloudUploadIcon
+                    color="action"
+                    sx={{ fontSize: 40, color: "#07aaf4" }}
+                  />
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ color: "#07aaf4" }}
+                  >
+                    Drag and drop your file here or click to upload
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept=".csv, .xlsx, .xls, .txt"
+                      onChange={(e) => {
+                        if (e.target.files?.length) {
+                          handleFileUpload(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </Typography>
+                  {uploadedFileName ? (
+                    <Typography variant="body1" gutterBottom>
+                      Uploaded File: {uploadedFileName}
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" color="textSecondary">
+                      CSV / Excel / Txt
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Box>
             <Typography
               variant="body1"
               gutterBottom
@@ -161,12 +283,17 @@ const DistributeToken = () => {
               Insert manually
             </Typography>
             <TextField
-              label="Insert manually"
               variant="outlined"
               multiline
               rows={6}
-              placeholder="1"
-              sx={{ mb: 1, width: "80%" }}
+              sx={{ mb: 1, width: "80%",fontSize: "10px" }}
+              value={data
+                .map((row, index) =>
+                  Array.isArray(row)
+                    ? index + 1 + ": " + row.join(", ")
+                    : index + 1 + ": " + Object.values(row).join(", ")
+                )
+                .join("\n")}
             />
             <Box sx={{ mt: 2 }}>
               <Button variant="contained" color="primary">
