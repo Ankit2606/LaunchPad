@@ -1,4 +1,3 @@
-// src/Manage_Token.js
 import React from "react";
 import {
   Box,
@@ -16,6 +15,9 @@ import { TbHammer } from "react-icons/tb";
 import { AiOutlineFire } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { FaHandHoldingUsd } from "react-icons/fa";
+import { FaRegPauseCircle } from "react-icons/fa";
+import { AiOutlinePercentage } from "react-icons/ai";
+import { MdCurrencyExchange } from "react-icons/md";
 
 const ManageTokenTool = () => {
   return (
@@ -44,7 +46,7 @@ const ManageTokenTool = () => {
           <Divider sx={{ my: 2 }} />
           <Box display="flex" alignItems="center">
             <Typography variant="h5" component="div" sx={{ mr: 2 }}>
-              Ankit (ANK)
+              MyToken (MTK)
             </Typography>
             <Chip
               icon={<VerifiedIcon />}
@@ -55,15 +57,15 @@ const ManageTokenTool = () => {
           </Box>
           <Box display="flex" alignItems="center" mt={2}>
             <Typography variant="body1" sx={{ mr: 2 }}>
-              Token name
+              Token name :
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Ankit
+            MyToken
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" mt={2}>
             <Typography variant="body1" sx={{ mr: 2 }}>
-              Token supply
+              Token supply :
             </Typography>
             <Typography variant="body1" color="textSecondary">
               1,000.0
@@ -73,52 +75,75 @@ const ManageTokenTool = () => {
 
           <Grid container spacing={2} mt={2}>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
                 <TbHammer /> Mint
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
                 <AiOutlineFire /> Burn
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
                 <CgProfile /> Change owner
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
                 <FaHandHoldingUsd /> Renounce ownership
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
-                Blacklist address
-              </Button>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
+                <FaRegPauseCircle />
                 Pause
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
+                <AiOutlinePercentage />
                 Edit transaction tax / fee
               </Button>
             </Grid>
             <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
-                Edit deflation settings
-              </Button>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
-                Edit asset documentation
-              </Button>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <Button fullWidth variant="contained" color="primary" className="manageToeknButton">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className="manageTokenButton"
+              >
+                <MdCurrencyExchange />
                 Change tokens per address limit
               </Button>
             </Grid>

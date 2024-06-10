@@ -63,6 +63,7 @@ const ManageToken = () => {
                 variant="outlined"
                 margin="normal"
                 placeholder="0xfb2aff6bf2d339a5e73ed73f1ec554b6ee3de356"
+                sx={{width:"80%"}}
               />
             </Box>
             <Box sx={{ mt: 2 }}>
